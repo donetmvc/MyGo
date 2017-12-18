@@ -5,11 +5,12 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
+
+	"eland-eoas-service/models"
 )
 
 func init() {
-	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("mysqlConn"))
+	models.InitDB()
 }
 
 func main() {
@@ -19,5 +20,6 @@ func main() {
 
 		orm.Debug = true
 	}
+	orm.RunSyncdb("default", false, true)
 	beego.Run()
 }

@@ -5,10 +5,6 @@ import (
 	"errors"
 )
 
-func init() {
-	orm.RegisterModel(new(LoginInfo))
-}
-
 type LoginInfo struct {
 	Id			int
 	Name		string
@@ -23,12 +19,12 @@ type Detail struct {
 	Phone		string
 }
 
-func ExtendLogin(name string, password string) (loginResult LoginInfo, err error) {
+func Login(name string, password string) (loginResult LoginInfo, err error) {
 	db := orm.NewOrm()
 	db.Using("eoas")
 	loginInfo := LoginInfo{ Name: name, Password: password}
 
-	err = db.Read(loginInfo)
+	err = db.Read(&loginInfo)
 
 	if err == orm.ErrNoRows {
 		err = errors.New("用户不存在")
@@ -38,3 +34,5 @@ func ExtendLogin(name string, password string) (loginResult LoginInfo, err error
 
 	return loginInfo, err
 }
+
+// func CreateUser(user *U)

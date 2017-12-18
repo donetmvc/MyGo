@@ -10,8 +10,61 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /api/v1
-paths: {}
+paths:
+  /login/{userName}/{password}:
+    get:
+      tags:
+      - login
+      description: Login with userName and password
+      operationId: LoginController.Login
+      parameters:
+      - in: path
+        name: userName
+        description: user name
+        required: true
+        type: string
+      - in: path
+        name: password
+        description: user password
+        required: true
+        type: integer
+        format: int64
+      responses:
+        "200":
+          description: ""
+          schema:
+            $ref: '#/definitions/models.LoginInfo'
+        "400":
+          description: no enough input
+        "500":
+          description: login error
 definitions:
+  models.Detail:
+    title: Detail
+    type: object
+    properties:
+      Address:
+        type: string
+      Email:
+        type: string
+      Id:
+        type: integer
+        format: int64
+      Phone:
+        type: string
+  models.LoginInfo:
+    title: LoginInfo
+    type: object
+    properties:
+      Detail:
+        $ref: '#/definitions/models.Detail'
+      Id:
+        type: integer
+        format: int64
+      Name:
+        type: string
+      Password:
+        type: string
   models.Object:
     title: Object
     type: object
