@@ -15,6 +15,34 @@
     },
     "basePath": "/api/v1",
     "paths": {
+        "/login/": {
+            "post": {
+                "tags": [
+                    "login"
+                ],
+                "description": "create users",
+                "operationId": "LoginController.CreateUser",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "body for user content",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.LoginInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{int} models.LoginInfo.Id"
+                    },
+                    "403": {
+                        "description": "body is empty"
+                    }
+                }
+            }
+        },
         "/login/{userName}/{password}": {
             "get": {
                 "tags": [
@@ -91,59 +119,6 @@
                     "type": "string"
                 },
                 "Password": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Object": {
-            "title": "Object",
-            "type": "object",
-            "properties": {
-                "ObjectId": {
-                    "type": "string"
-                },
-                "PlayerName": {
-                    "type": "string"
-                },
-                "Score": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
-        "models.Profile": {
-            "title": "Profile",
-            "type": "object",
-            "properties": {
-                "Address": {
-                    "type": "string"
-                },
-                "Age": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "Email": {
-                    "type": "string"
-                },
-                "Gender": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.User": {
-            "title": "User",
-            "type": "object",
-            "properties": {
-                "Id": {
-                    "type": "string"
-                },
-                "Password": {
-                    "type": "string"
-                },
-                "Profile": {
-                    "$ref": "#/definitions/models.Profile"
-                },
-                "Username": {
                     "type": "string"
                 }
             }

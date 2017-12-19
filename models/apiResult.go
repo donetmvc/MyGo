@@ -3,7 +3,7 @@ package models
 type APIResult struct {
 	Success			bool
 	Result			string
-	Error			*APIError	`orm:"rel(one)"`
+	Error			*APIError	`xorm:"extends"`
 }
 
 type APIError struct {

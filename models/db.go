@@ -1,14 +1,29 @@
 package models
 
 import (
-	"github.com/astaxie/beego/orm"
+	"github.com/go-xorm/xorm"
 	"github.com/astaxie/beego"
+	_ "github.com/go-sql-driver/mysql"
+
+	"time"
+	"fmt"
 )
 
+var engine *xorm.Engine
 
-func InitDB() {
-	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("mysqlConn"))
-
-	orm.RegisterModel(new(LoginInfo), new(Detail))
+func init() {
+	var err error
+	engine, err = xorm.NewEngine("mysql", beego.AppConfig.String("mysqlConn"))
+	if err != nil {
+		fmt.Print(err.Error())
+	}
+	engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+	engine.ShowSQL(true)
 }
+
+// func InitDB() {
+// 	var err error
+// 	engine, err = xorm.NewEngine("mysql", beego.AppConfig.String("mysqlConn"))
+// 	engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+// 	engine.Sync2(new(LoginInfo), new(Detail))
+// }

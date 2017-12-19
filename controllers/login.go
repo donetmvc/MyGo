@@ -6,6 +6,17 @@ import (
 
 	"encoding/json"
 )
+
+var (
+	apiResult *models.APIResult
+	apiError *models.APIError
+)
+
+func init() {
+	apiResult = new(models.APIResult)
+	apiError = new(models.APIError)
+}
+
 // Login API
 type LoginController struct {
 	beego.Controller
@@ -24,14 +35,10 @@ func (l *LoginController) GetLogin() {
 	password := l.Ctx.Input.Param(":password")
 	if username != "" && password != "" {
 		info, err := models.Login(username, password)
-
-		apiResult := new(models.APIResult)
-		apiError := new(models.APIError)
-
 		if err != nil {
 			apiError.Message = err.Error()
 		} else {
-			infoJson, jsonError := json.Marshal(info)
+			infoJson, jsonError := json.Marshal(&info)
 			if jsonError != nil {
 				apiError.Message = "json convert error"
 				
@@ -41,11 +48,30 @@ func (l *LoginController) GetLogin() {
 			}
 		}
 		apiResult.Error = apiError
-		// if apiError.Message != "" {
-		// 	msgBody, _:= json.Marshal(apiResult)
-		// 	l.CustomAbort(500, string(msgBody))
-		// }
 		l.Data["json"] = apiResult
 	}
+	l.ServeJSON()
+}
+
+
+// @Title CreateUser
+// @Description create users
+// @Param	body		body 	models.LoginInfo	true		"body for user content"
+// @Success 200 {int} models.LoginInfo.Id
+// @Failure 403 body is empty
+// @router / [post]
+func (l *LoginController) Register() {
+	var userInfo models.LoginInfo
+	json.Unmarshal(l.Ctx.Input.RequestBody, &userInfo)
+	id, err := models.CreateUser(&userInfo)
+
+	if err != nil {
+		apiError.Message = err.Error()
+	} else {
+		apiResult.Success = true
+		apiResult.Result = `{"id":` + string(int(id)) + `}`
+	}
+
+	l.Data["json"] = apiResult
 	l.ServeJSON()
 }

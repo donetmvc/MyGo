@@ -1,38 +1,48 @@
 package models
 
 import (
-	"github.com/astaxie/beego/orm"
+	"fmt"
 	"errors"
 )
 
 type LoginInfo struct {
-	Id			int
+	Id			int	`xorm:"BigInt"`
 	Name		string
 	Password	string
-	Detail		*Detail `orm:"rel(one)"`
+	Detail		*Detail `xorm:"extends"`
 }
 
 type Detail struct {
-	Id			int
+	Id			int	`xorm:"BigInt 'detail_id'"`
 	Email		string
 	Address		string
 	Phone		string
 }
 
-func Login(name string, password string) (loginResult LoginInfo, err error) {
-	db := orm.NewOrm()
-	db.Using("eoas")
-	loginInfo := LoginInfo{ Name: name, Password: password}
-
-	err = db.Read(&loginInfo)
-
-	if err == orm.ErrNoRows {
-		err = errors.New("用户不存在")
-	} else if err == orm.ErrMissPK {
-		err = errors.New("找不到主键")
-	}
-
-	return loginInfo, err
+func init() {
+	engine.Sync2(new(LoginInfo), new(Detail))
 }
 
-// func CreateUser(user *U)
+func Login(name string, password string) (loginResult LoginInfo, err error) {
+	var loginInfo LoginInfo
+	has, err := engine.Alias("e").Where("e.name = ?", name).And("e.password = ?", password).Get(&loginInfo)
+
+	fmt.Println(has)
+
+	if !has {
+		err = errors.New("用户不存在")
+		return loginInfo, err
+	} 
+
+	return loginInfo, nil
+}
+
+func CreateUser(l *LoginInfo) (user int64, err error) {
+	id, err := engine.Insert(l)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return id, err
+}
